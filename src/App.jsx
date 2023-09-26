@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import classNames from "classnames";
 
 const list = ['rain', 'summer', 'winter'];
@@ -8,19 +8,23 @@ export function App() {
     const audio = useRef(null);
     const path = `./${process.env.REACT_APP_STATIC_FOLDER_PATH}`;
 
-    const handleButtonClick = (item) => {
+    const handleIconBg = (item) => {
         const buttonIcon = document.querySelector(`#icon-${item}`);
         buttonIcon.style.backgroundImage = audio.current.paused ?
             `url(${path}icons/pause.svg)` :
             `url(${path}icons/${item}.svg)`;
+    }
 
+    const handleButtonClick = (item) => {
         if (item === activeSound) {
+            handleIconBg(item);
             audio.current.paused ? audio.current.play() : audio.current.pause();
         } else {
             audio.current.pause();
             const playPromise = audio.current.play();
-            if (playPromise !== undefined) {
+            if (playPromise) {
                 playPromise.then(() => {
+                    handleIconBg(item);
                     audio.current.src = `${path}sounds/${item}.mp3`;
                     audio.current.play();
                 })
@@ -33,6 +37,17 @@ export function App() {
         audio.current.volume = e.currentTarget.value / 100
     }
 
+    useEffect(() => {
+        const icons = document.querySelectorAll('.sounds__button-icon');
+        icons.forEach(icon => {
+            const iconId = icon.getAttribute('id')
+                .replace('icon-', '');
+            if (iconId !== activeSound) {
+                icon.style.backgroundImage = `url(${path}icons/${iconId}.svg)`
+            }
+        })
+    }, [activeSound])
+
     return(
         <div className="sounds">
             <span className="sounds__bg"  style={{backgroundImage: `url(${path}images/${activeSound}.jpg)`}} />
@@ -44,22 +59,27 @@ export function App() {
             <div className="sounds__buttons">
                 {
                     list.map((item) => (
-                        <div className="sounds__button-block" key={item}>
+                        <div
+                            className={classNames(
+                                'sounds__button-block',
+                                item === activeSound && 'is-active'
+                            )}
+                            key={item}
+                        >
                             <button
                                 id={item}
-                                className={classNames(
-                                    'sounds__button', item === activeSound && 'is-active'
-                                )}
+                                className="sounds__button"
                                 style={{backgroundImage: `url(${path}images/${item}.jpg)`}}
                                 onClick={() => handleButtonClick(item)}
                             >
-                            <span
-                                className="sounds__button-icon"
-                                id={`icon-${item}`}
-                                style={{backgroundImage: `url(${path}icons/${item}.svg)`}}
-                            />
+                                <span
+                                    className="sounds__button-icon"
+                                    id={`icon-${item}`}
+                                    style={{backgroundImage: `url(${path}icons/${item}.svg)`}}
+                                />
                             </button>
-                            <input
+                            { item === activeSound &&
+                                <input
                                 type="range"
                                 defaultValue={50}
                                 min={0}
@@ -68,7 +88,8 @@ export function App() {
                                 id={item}
                                 onInput={handleVolumeInput}
                                 className="sounds__button-volume"
-                            />
+                                />
+                            }
                         </div>
                     ))
                 }
