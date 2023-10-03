@@ -1,4 +1,5 @@
-import React, {useEffect, useRef, useState} from "react";
+import * as React from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 
 const list = ['rain', 'summer', 'winter'];
@@ -8,14 +9,14 @@ export function App() {
     const audio = useRef(null);
     const path = `./${process.env.REACT_APP_STATIC_FOLDER_PATH}`;
 
-    const handleIconBg = (item) => {
-        const buttonIcon = document.querySelector(`#icon-${item}`);
+    const handleIconBg = (item: string) => {
+        const buttonIcon: HTMLElement = document.querySelector(`#icon-${item}`);
         buttonIcon.style.backgroundImage = audio.current.paused ?
             `url(${path}icons/pause.svg)` :
             `url(${path}icons/${item}.svg)`;
     }
 
-    const handleButtonClick = (item) => {
+    const handleButtonClick = (item: string) => {
         if (item === activeSound) {
             handleIconBg(item);
             audio.current.paused ? audio.current.play() : audio.current.pause();
@@ -33,12 +34,12 @@ export function App() {
         }
     }
 
-    const handleVolumeInput = (e) => {
-        audio.current.volume = e.currentTarget.value / 100
+    const handleVolumeInput = (e: ChangeEvent<HTMLInputElement>) => {
+        audio.current.volume = + e.currentTarget.value / 100;
     }
 
     useEffect(() => {
-        const icons = document.querySelectorAll('.sounds__button-icon');
+        const icons: NodeListOf<HTMLElement> = document.querySelectorAll('.sounds__button-icon');
         icons.forEach(icon => {
             const iconId = icon.getAttribute('id')
                 .replace('icon-', '');

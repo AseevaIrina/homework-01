@@ -63,6 +63,7 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: 50% 50%;
+    cursor: pointer;
     transform: scale(1);
   }
   &__button-block.is-active &__button {
@@ -82,5 +83,6 @@ body {
     width: 80%;
     height: 8px;
     margin: 32px auto 0;
+    cursor: pointer;
   }
 }

@@ -9,14 +9,14 @@ const contextFolder = 'src';
 
 module.exports = {
     context: path.resolve(__dirname, contextFolder),
-    entry: './index.jsx',
+    entry: './index.tsx',
     output: {
         filename: '[name].[contenthash].js',
         path: path.resolve(__dirname, 'dist'),
         clean: true
     },
     resolve: {
-        extensions: ['.jsx', '.js']
+        extensions: ['.tsx', '.ts', '.js']
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -76,6 +76,11 @@ module.exports = {
             {
                 test: /\.(woff|woff2|eot|ttf|otf)$/i,
                 type: 'asset/resource',
+            },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/
             },
             {
                 test: /\.(jsx|js)$/,
